@@ -4,12 +4,15 @@
 
 var express = require("express"),
     url = require("url"),
-    oauth = require("oauth");
+    oauth = require("oauth"),
+    setupVariables = require("./credentials.json");
+
+var twitterConsumerKey = setupVariables.twitterConsumerKey;
+var twitterConsumerSecret = setupVariables.twitterConsumerSecret;
 
 
 
-
-var app = express();
+var app = module.exports = express.createServer();
 
 app.get('/',function(request, response){
     response.send("home route");
@@ -17,16 +20,6 @@ app.get('/',function(request, response){
 });
 
 app.get('/followers.json', function(request, response){
-
-    var twitter = new oauth.OAuth(
-        'https://api.twitter.com/oauth/request_token',
-        'https://api.twitter.com/oauth/access_token',
-        process.env.TWITTER_CONSUMER_KEY,
-        process.env.TWITTER_CONSUMER_SECRET,
-        '1.0A',
-        null,
-        'HMAC-SHA1'
-    );
 
     var screenName = request.query.username;
 
@@ -38,8 +31,8 @@ app.get('/followers.json', function(request, response){
     var twitter = new oauth.OAuth(
         'https://api.twitter.com/oauth/request_token',
         'https://api.twitter.com/oauth/access_token',
-        process.env.TWITTER_CONSUMER_KEY,
-        process.env.TWITTER_CONSUMER_SECRET,
+        twitterConsumerKey,
+        twitterConsumerSecret,
         '1.0A',
         null,
         'HMAC-SHA1'
@@ -56,7 +49,7 @@ app.get('/followers.json', function(request, response){
         process.env.TWITTER_ACCESS_TOKEN_SECRET,
         function(err, data) {
             if (err) {
-                response.jsonp(err);
+                response.send(err);
             } else {
                 var users = [];
 
@@ -64,7 +57,7 @@ app.get('/followers.json', function(request, response){
                     users.push(user);
                 });
 
-                response.jsonp({
+                response.send({
                     'statusCode': 200,
                     'data': users
                 });
@@ -72,6 +65,15 @@ app.get('/followers.json', function(request, response){
         }
     );
 });
+
+if (!module.parent) {
+    app.listen(3000, 'localhost', function () {
+        console.log('Express server listening on port %d, environment: %s', app.address().port, app.settings.env)
+    });
+
+}
+
+
 
 
 
