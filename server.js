@@ -1,6 +1,3 @@
-/**
- * Created by avikpal on 25/06/15.
- */
 
 var express = require("express"),
     url = require("url"),
@@ -9,6 +6,8 @@ var express = require("express"),
 
 var twitterConsumerKey = setupVariables.twitterConsumerKey;
 var twitterConsumerSecret = setupVariables.twitterConsumerSecret;
+var twitterAccessToken = setupVariables.twitterAccessToken;
+var twitterAccessTokenSecret = setupVariables.twitterAccessTokenSecret;
 
 
 
@@ -45,21 +44,21 @@ app.get('/followers.json', function(request, response){
             pathname: '/1.1/followers/ids.json',
             query: query
         }),
-        process.env.TWITTER_ACCESS_TOKEN,
-        process.env.TWITTER_ACCESS_TOKEN_SECRET,
+        twitterAccessToken,
+        twitterAccessTokenSecret,
         function(err, data) {
             if (err) {
                 response.send(err);
             } else {
                 var users = [];
 
-                JSON.parse(data).forEach(function(user) {
-                    users.push(user);
-                });
+                //JSON.parse(data).forEach(function(user) {
+                //    users.push(user);
+                //});
 
                 response.send({
                     'statusCode': 200,
-                    'data': users
+                    'data': data
                 });
             }
         }
