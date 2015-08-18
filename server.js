@@ -20,6 +20,9 @@ app.get('/',function(request, response){
 
 app.get('/followers.json', function(request, response){
 
+    //to get list of followers for a particular account form the query as
+    //.../followers.json?username=<intended_user_name>
+
     var screenName = request.query.username;
 
     var query = {
@@ -41,7 +44,7 @@ app.get('/followers.json', function(request, response){
         url.format({
             protocol: 'https:',
             hostname: 'api.twitter.com',
-            pathname: '/1.1/followers/ids.json',
+            pathname: '/1.1/followers/list.json',
             query: query
         }),
         twitterAccessToken,
@@ -52,13 +55,15 @@ app.get('/followers.json', function(request, response){
             } else {
                 var users = [];
 
-                //JSON.parse(data).forEach(function(user) {
-                //    users.push(user);
-                //});
+                var jsonData = JSON.parse(data);
+
+                jsonData.users.forEach(function(user) {
+                    users.push(user);
+                });
 
                 response.send({
                     'statusCode': 200,
-                    'data': data
+                    'data': users
                 });
             }
         }
@@ -71,9 +76,3 @@ if (!module.parent) {
     });
 
 }
-
-
-
-
-
-
