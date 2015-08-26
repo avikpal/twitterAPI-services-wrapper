@@ -61,6 +61,10 @@ app.get('/followers.json', function(request, response){
                     users.push(user);
                 });
 
+                /*TODO change to appropriate header before deployment- this is just
+                to support a local running instance */
+
+                response.setHeader("Access-Control-Allow-Origin", "*");
                 response.send({
                     'statusCode': 200,
                     'data': users
